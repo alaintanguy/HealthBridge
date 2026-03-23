@@ -1,0 +1,12 @@
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea
+/build
+/captures
+.externalNativeBuild
+
+# API Keys - NEVER push these!
+secrets.properties
+apikeys.properties
