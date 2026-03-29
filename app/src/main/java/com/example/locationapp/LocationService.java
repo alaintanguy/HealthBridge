@@ -3,48 +3,63 @@ package com.example.locationapp;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Looper;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
-public class LocationService extends Service implements LocationListener {
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
-    private LocationManager locationManager;
+public class LocationService extends Service {
+
+    private FusedLocationProviderClient fusedClient;
+    private LocationCallback locationCallback;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 5000, 0, this);
-        } catch (SecurityException e) {
-            e.printStackTrace();
+        fusedClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult result) {
+                Location location = result.getLastLocation();
+                if (location != null) {
+                    Intent intent = new Intent("LOCATION_UPDATE");
+                    intent.putExtra("latitude", location.getLatitude());
+                    intent.putExtra("longitude", location.getLongitude());
+                    sendBroadcast(intent);
+                }
+            }
+        };
+
+        LocationRequest request = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedClient.requestLocationUpdates(request,
+                    locationCallback, Looper.getMainLooper());
         }
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        Intent intent = new Intent("LOCATION_UPDATE");
-        intent.putExtra("latitude", location.getLatitude());
-        intent.putExtra("longitude", location.getLongitude());
-        sendBroadcast(intent);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) { return null; }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-    @Override
-    public void onProviderEnabled(String provider) {}
-    @Override
-    public void onProviderDisabled(String provider) {}
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        locationManager.removeUpdates(this);
+        fusedClient.removeLocationUpdates(locationCallback);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }
