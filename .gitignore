@@ -8,5 +8,8 @@
 .externalNativeBuild
 
 # API Keys - NEVER push these!
-secrets.properties
 apikeys.properties
+secrets.properties
+node_modules/
+.env
+*.log

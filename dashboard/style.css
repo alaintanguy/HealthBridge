@@ -1,0 +1,184 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: #0f1923;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+/* ── Header ── */
+#header {
+    background: #1a2332;
+    padding: 16px 24px;
+    border-bottom: 2px solid #00d4ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header h1 {
+    font-size: 24px;
+    color: #00d4ff;
+}
+
+#header p {
+    color: #aaaaaa;
+    font-size: 14px;
+}
+
+/* ── Status Bar ── */
+#status-bar {
+    background: #1a2332;
+    padding: 8px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid #2a3a4a;
+}
+
+#status-text {
+    color: #00ff88;
+}
+
+#last-update {
+    margin-left: auto;
+    color: #888888;
+}
+
+/* ── Map ── */
+#map {
+    width: 100%;
+    height: 400px;
+    border-bottom: 2px solid #2a3a4a;
+}
+
+/* ── Info Panel ── */
+#info-panel {
+    display: flex;
+    gap: 16px;
+    padding: 16px 24px;
+    background: #1a2332;
+    flex-wrap: wrap;
+}
+
+.info-card {
+    background: #0f1923;
+    border: 1px solid #2a3a4a;
+    border-radius: 12px;
+    padding: 16px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.info-card h3 {
+    font-size: 13px;
+    color: #00d4ff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.info-card p {
+    font-size: 15px;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+/* ── Controls ── */
+#controls {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px;
+    background: #1a2332;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+#btn-request {
+    background: #00d4ff;
+    color: #0f1923;
+}
+
+#btn-request:hover {
+    background: #00b8d9;
+    transform: scale(1.03);
+}
+
+#btn-history {
+    background: #2a3a4a;
+    color: #ffffff;
+}
+
+#btn-history:hover {
+    background: #3a4a5a;
+}
+
+#btn-center {
+    background: #2a3a4a;
+    color: #ffffff;
+}
+
+#btn-center:hover {
+    background: #3a4a5a;
+}
+
+/* ── History Panel ── */
+#history-panel {
+    padding: 16px 24px;
+    background: #0f1923;
+    border-top: 1px solid #2a3a4a;
+}
+
+#history-panel h3 {
+    color: #00d4ff;
+    margin-bottom: 12px;
+}
+
+.history-item {
+    background: #1a2332;
+    border: 1px solid #2a3a4a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.history-item span {
+    color: #aaaaaa;
+}
+
+.history-item strong {
+    color: #ffffff;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    #info-panel {
+        flex-direction: column;
+    }
+
+    #map {
+        height: 280px;
+    }
+}
