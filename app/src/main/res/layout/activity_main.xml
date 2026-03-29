@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvStatus"
+        android:id="@+id/locationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HealthBridge"
-        android:textSize="24sp"
+        android:text="Fetching location..."
+        android:textSize="20sp"
         android:textStyle="bold"/>
 
 </LinearLayout>
