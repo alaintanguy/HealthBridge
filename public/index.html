@@ -1,70 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthBridge - Michel's Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Leaflet Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <title>HealthBridge</title>
 </head>
 <body>
+    <h2>HealthBridge - Send Location</h2>
+    <button onclick="sendLocation()">📍 Send My Location to Michel</button>
+    <p id="status"></p>
 
-    <div id="header">
-        <h1>🏥 HealthBridge</h1>
-        <p>Monitoring: <strong>Alain</strong></p>
-    </div>
-
-    <div id="status-bar">
-        <span id="status-dot">🟢</span>
-        <span id="status-text">Waiting for data...</span>
-        <span id="last-update"></span>
-    </div>
-
-    <div id="map"></div>
-
-    <div id="info-panel">
-
-        <div class="info-card">
-            <h3>📍 Last Location</h3>
-            <p id="lat-lon">--</p>
-            <p id="address">--</p>
-        </div>
-
-        <div class="info-card">
-            <h3>🕐 Last Update</h3>
-            <p id="time-ago">--</p>
-            <p id="exact-time">--</p>
-        </div>
-
-        <div class="info-card">
-            <h3>📡 Interval</h3>
-            <p id="interval-info">--</p>
-        </div>
-
-    </div>
-
-    <div id="controls">
-        <button id="btn-request" onclick="requestNow()">
-            📨 Request Now
-        </button>
-        <button id="btn-history" onclick="toggleHistory()">
-            📋 Show History
-        </button>
-        <button id="btn-center" onclick="centerMap()">
-            🎯 Center Map
-        </button>
-    </div>
-
-    <!-- History Panel -->
-    <div id="history-panel" class="hidden">
-        <h3>📋 Location History</h3>
-        <div id="history-list"></div>
-    </div>
-
-    <script src="app.js"></script>
-
+<script>
+function sendLocation() {
+    document.getElementById("status").innerText = "Getting location...";
+    
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        
+        fetch("https://api.pushover.net/1/messages.json", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                token: "ao8wcoz45n6t2ez3862zg9nwmf9459",
+                user: "u5dk24b5316er5p32364fmzyko2xxj",
+                message: `📍 Alain's Location:\nLat: ${lat}\nLon: ${lon}\nhttps://maps.google.com/?q=${lat},${lon}`,
+                title: "HealthBridge Location"
+            })
+        });
+        
+        document.getElementById("status").innerText = "✅ Location sent to Michel!";
+    });
+}
+</script>
 </body>
 </html>
