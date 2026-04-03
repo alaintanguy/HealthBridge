@@ -4,9 +4,8 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.BODY_SENSORS" />
+    <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Wear OS Feature -->
     <uses-feature android:name="android.hardware.type.watch" />
@@ -15,8 +14,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@android:style/Theme.DeviceDefault">
 
         <!-- Main Wear Activity -->
         <activity
@@ -28,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Wearable Listener Service -->
+        <!-- Wearable Data Layer Listener -->
         <service
             android:name=".WearDataListenerService"
             android:exported="true">
