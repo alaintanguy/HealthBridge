@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthBridge</title>
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #map { height: 400px; width: 100%; margin-top: 20px; }
+        button { padding: 15px 30px; font-size: 18px; 
+                 background: #4CAF50; color: white; 
+                 border: none; border-radius: 8px; cursor: pointer; }
+        #status { margin: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h2>🏥 HealthBridge</h2>
+    <p>Monitoring: <strong>Alain</strong></p>
+    <button onclick="sendLocation()">📍 Send My Location to Michel</button>
+    <p id="status"></p>
+    <div id="map"></div>
+
+<script>
+    // Initialize map centered on France
+    var map = L.map('map').setView([46.5, 2.5], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker = null;
+
+    function sendLocation() {
+        document.getElementById("status").innerText = "📡 Getting location...";
+
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            // Show on map
+            if (marker) { map.removeLayer(marker); }
+            marker = L.marker([lat, lon]).addTo(map)
+                .bindPopup("📍 Alain is here!").openPopup();
+            map.setView([lat, lon], 15);
+
+            // Send to Michel via Pushover
+            fetch("https://api.pushover.net/1/messages.json", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    token: "ao8wcoz45n6t2ez3862zg9nwmf9459",
+                    user: "u5dk24b5316er5p32364fmzyko2xxj",
+                    message: `📍 Alain's Location:\nLat: ${lat}\nLon: ${lon}\nhttps://maps.google.com/?q=${lat},${lon}`,
+                    title: "HealthBridge Location"
+                })
+            });
+
+            document.getElementById("status").innerText = 
+                `✅ Location sent to Michel! (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+
+        }, function(err) {
+            document.getElementById("status").innerText = 
+                "❌ Error: " + err.message;
+        });
+    }
+</script>
+</body>
+</html>
