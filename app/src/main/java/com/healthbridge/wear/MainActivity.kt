@@ -1,28 +1,18 @@
 package com.healthbridge.wear
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity() {
 
     private lateinit var tvHeartRate: TextView
     private lateinit var tvStatus: TextView
-    private lateinit var healthDataService: HealthDataService
-
-    private val permissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            startHealthMonitoring()
-        } else {
-            tvStatus.text = "Permission Denied"
-        }
-    }
+    private lateinit var dataClient: DataClient
+    private lateinit var heartRateMonitor: HeartRateMonitor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,33 +20,36 @@ class MainActivity : AppCompatActivity() {
 
         tvHeartRate = findViewById(R.id.tvHeartRate)
         tvStatus = findViewById(R.id.tvStatus)
+        dataClient = Wearable.getDataClient(this)
 
-        healthDataService = HealthDataService(this)
-
-        checkPermissionAndStart()
-    }
-
-    private fun checkPermissionAndStart() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.BODY_SENSORS
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                startHealthMonitoring()
+        heartRateMonitor = HeartRateMonitor(this) { bpm ->
+            runOnUiThread {
+                tvHeartRate.text = "$bpm BPM"
+                tvStatus.text = "Live Monitoring"
             }
-            else -> {
-                permissionLauncher.launch(Manifest.permission.BODY_SENSORS)
-            }
+            sendHeartRateToPhone(bpm)
         }
     }
 
-    private fun startHealthMonitoring() {
+    override fun onResume() {
+        super.onResume()
+        heartRateMonitor.start()
         tvStatus.text = "Monitoring..."
-        healthDataService.startMonitoring()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        healthDataService.stopMonitoring()
+    override fun onPause() {
+        super.onPause()
+        heartRateMonitor.stop()
+        tvStatus.text = "Paused"
+    }
+
+    private fun sendHeartRateToPhone(bpm: Int) {
+        val request = PutDataMapRequest.create("/heart_rate").apply {
+            dataMap.putInt("bpm", bpm)
+            dataMap.putLong("timestamp", System.currentTimeMillis())
+        }.asPutDataRequest()
+            .setUrgent()
+
+        dataClient.putDataItem(request)
     }
 }
