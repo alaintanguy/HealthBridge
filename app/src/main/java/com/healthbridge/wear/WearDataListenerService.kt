@@ -9,8 +9,9 @@ class WearDataListenerService : WearableListenerService() {
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents.forEach { event ->
             val path = event.dataItem.uri.path
+            // Handle incoming data from phone if needed
             when (path) {
-                "/command" -> handleCommand(event)
+                "/settings" -> handleSettingsUpdate(event)
             }
         }
     }
@@ -18,25 +19,15 @@ class WearDataListenerService : WearableListenerService() {
     override fun onMessageReceived(messageEvent: MessageEvent) {
         when (messageEvent.path) {
             "/start_monitoring" -> {
-                // Start health monitoring on watch
-                val intent = android.content.Intent(this, MainActivity::class.java)
-                intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
+                // Start heart rate monitoring
             }
             "/stop_monitoring" -> {
-                // Stop monitoring
+                // Stop heart rate monitoring
             }
         }
     }
 
-    private fun handleCommand(event: com.google.android.gms.wearable.DataEvent) {
-        val dataMap = com.google.android.gms.wearable.DataMapItem
-            .fromDataItem(event.dataItem).dataMap
-        val command = dataMap.getString("command")
-
-        when (command) {
-            "start" -> { /* handle start */ }
-            "stop"  -> { /* handle stop  */ }
-        }
+    private fun handleSettingsUpdate(event: com.google.android.gms.wearable.DataEvent) {
+        // Process settings sent from phone app
     }
 }
