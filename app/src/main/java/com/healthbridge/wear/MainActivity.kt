@@ -1,19 +1,28 @@
 package com.healthbridge.wear
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.Wearable
+import androidx.core.content.ContextCompat
 
-class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var tvHeartRate: TextView
     private lateinit var tvStatus: TextView
     private lateinit var healthDataService: HealthDataService
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            startHealthMonitoring()
+        } else {
+            tvStatus.text = "Permission Denied"
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,35 +32,31 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         tvStatus = findViewById(R.id.tvStatus)
 
         healthDataService = HealthDataService(this)
+
+        checkPermissionAndStart()
+    }
+
+    private fun checkPermissionAndStart() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BODY_SENSORS
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                startHealthMonitoring()
+            }
+            else -> {
+                permissionLauncher.launch(Manifest.permission.BODY_SENSORS)
+            }
+        }
+    }
+
+    private fun startHealthMonitoring() {
+        tvStatus.text = "Monitoring..."
         healthDataService.startMonitoring()
-
-        tvStatus.text = "Monitoring active..."
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Wearable.getDataClient(this).addListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Wearable.getDataClient(this).removeListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         healthDataService.stopMonitoring()
-    }
-
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        dataEvents.forEach { event ->
-            if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataMap = DataMapItem.fromDataItem(event.dataItem).dataMap
-                val heartRate = dataMap.getDouble("heart_rate")
-                runOnUiThread {
-                    tvHeartRate.text = "${heartRate.toInt()} BPM"
-                }
-            }
-        }
     }
 }
