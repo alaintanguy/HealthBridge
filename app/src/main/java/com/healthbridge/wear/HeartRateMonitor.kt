@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 
 class HeartRateMonitor(
-    private val context: Context,
+    context: Context,
     private val onHeartRateChanged: (Int) -> Unit
 ) : SensorEventListener {
 
@@ -18,11 +18,7 @@ class HeartRateMonitor(
 
     fun start() {
         heartRateSensor?.let {
-            sensorManager.registerListener(
-                this,
-                it,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
     }
 
@@ -34,14 +30,10 @@ class HeartRateMonitor(
         event?.let {
             if (it.sensor.type == Sensor.TYPE_HEART_RATE) {
                 val bpm = it.values[0].toInt()
-                if (bpm > 0) {
-                    onHeartRateChanged(bpm)
-                }
+                if (bpm > 0) onHeartRateChanged(bpm)
             }
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Handle accuracy changes if needed
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 }
