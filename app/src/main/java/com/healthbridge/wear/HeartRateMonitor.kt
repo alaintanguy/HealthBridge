@@ -30,16 +30,18 @@ class HeartRateMonitor(
         sensorManager.unregisterListener(this)
     }
 
-    override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type == Sensor.TYPE_HEART_RATE) {
-            val bpm = event.values[0].toInt()
-            if (bpm > 0) {
-                onHeartRateChanged(bpm)
+    override fun onSensorChanged(event: SensorEvent?) {
+        event?.let {
+            if (it.sensor.type == Sensor.TYPE_HEART_RATE) {
+                val bpm = it.values[0].toInt()
+                if (bpm > 0) {
+                    onHeartRateChanged(bpm)
+                }
             }
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Handle accuracy changes if needed
     }
 }
