@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css';
 
 const SERVER = 'http://10.0.0.34:3001';
 
-// Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -19,7 +18,6 @@ const redIcon = new L.Icon({
   iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
 });
 
-// Component to recenter map
 function RecenterMap({ lat, lng }) {
   const map = useMap();
   useEffect(() => {
@@ -67,73 +65,50 @@ function MichelPage() {
     setTracking(false);
   };
 
+  useEffect(() => {
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
   return (
     <div style={{ padding: 10 }}>
-      <h1 style={{ textAlign: 'center' }}>📍 Michel - GPS Tracker</h1>
-
+      <h2 style={{ textAlign: 'center' }}>📱 Michel - Live Map</h2>
       <div style={{ textAlign: 'center', marginBottom: 10 }}>
         {!tracking ? (
           <button onClick={handleStart}
             style={{ fontSize: 22, padding: '15px 40px', backgroundColor: '#4CAF50',
                      color: 'white', border: 'none', borderRadius: 10 }}>
-            ▶ START TRACKING
+            ▶️ START
           </button>
         ) : (
           <button onClick={handleStop}
             style={{ fontSize: 22, padding: '15px 40px', backgroundColor: '#f44336',
                      color: 'white', border: 'none', borderRadius: 10 }}>
-            ⏹ STOP TRACKING
+            ⏹️ STOP
           </button>
         )}
-        <p style={{ fontSize: 16 }}>
-          {tracking ? `🟢 Tracking... ${points.length} points` :
-           points.length > 0 ? `🔴 Stopped. ${points.length} points` : '⚪ Ready'}
-        </p>
+        <span style={{ marginLeft: 15, fontSize: 18 }}>
+          📍 {points.length} points
+        </span>
       </div>
-
       <MapContainer center={center} zoom={15}
-        style={{ width: '100%', height: '70vh', borderRadius: 10, border: '2px solid #333' }}>
+        style={{ height: '70vh', width: '100%', borderRadius: 10 }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; OpenStreetMap'
         />
         <RecenterMap lat={center[0]} lng={center[1]} />
-
-        {points.map((p, i) => (
-          <Marker key={i}
-            position={[p.lat, p.lng]}
-            icon={i === points.length - 1 ? redIcon : new L.Icon.Default()}>
-            <Popup>
-              #{i + 1}<br/>
-              ±{p.accuracy}m<br/>
-              {new Date(p.timestamp).toLocaleTimeString()}
-            </Popup>
-          </Marker>
-        ))}
-
-        {points.length > 1 && (
-          <Polyline
-            positions={points.map(p => [p.lat, p.lng])}
-            color="blue" weight={3}
-          />
+        {points.length > 0 && (
+          <>
+            <Polyline positions={points.map(p => [p.lat, p.lng])} color="red" weight={3} />
+            <Marker position={[points[0].lat, points[0].lng]}>
+              <Popup>Start</Popup>
+            </Marker>
+            <Marker position={[points[points.length-1].lat, points[points.length-1].lng]} icon={redIcon}>
+              <Popup>Latest ({new Date(points[points.length-1].time).toLocaleTimeString()})</Popup>
+            </Marker>
+          </>
         )}
       </MapContainer>
-
-      {points.length > 0 && !tracking && (
-        <div style={{ textAlign: 'center', marginTop: 10 }}>
-          <button onClick={() => {
-            const text = points.map((p, i) =>
-              `${i+1}. ${p.lat}, ${p.lng} ±${p.accuracy}m @ ${new Date(p.timestamp).toLocaleTimeString()}`
-            ).join('\n');
-            navigator.clipboard.writeText(text);
-            alert('Points copied!');
-          }}
-          style={{ fontSize: 18, padding: '10px 30px', backgroundColor: '#2196F3',
-                   color: 'white', border: 'none', borderRadius: 10 }}>
-            📋 Copy & Share
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -143,64 +118,57 @@ function AlainPage() {
   const [count, setCount] = useState(0);
   const [lastPos, setLastPos] = useState(null);
   const intervalRef = useRef(null);
+  const watchRef = useRef(null);
 
-  const sendGPS = async () => {
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const accuracy = Math.round(pos.coords.accuracy);
-          setLastPos({ lat, lng, accuracy });
-          try {
-            const res = await fetch(`${SERVER}/api/gps`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ lat, lng, accuracy })
-            });
-            const data = await res.json();
-            resolve(data.status);
-          } catch (e) {
-            resolve('error');
-          }
-        },
-        (err) => { console.error('GPS error:', err); resolve('error'); },
-        { enableHighAccuracy: true, timeout: 30000 }
-      );
-    });
+  const sendGPS = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const point = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: Math.round(pos.coords.accuracy)
+        };
+        try {
+          await fetch(`${SERVER}/api/gps`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(point)
+          });
+          setLastPos(point);
+          setCount(c => c + 1);
+        } catch (e) {
+          console.error('Send error:', e);
+        }
+      }, (err) => console.error('GPS error:', err),
+      { enableHighAccuracy: true, timeout: 30000 });
+    }
   };
 
   useEffect(() => {
     const checkStatus = setInterval(async () => {
       try {
-        const res = await fetch(`${SERVER}/api/status`);
+        const res = await fetch(`${SERVER}/api/gps`);
         const data = await res.json();
         if (data.trackingActive && status === 'waiting') {
           setStatus('sending');
-          clearInterval(checkStatus);
-          // Send first GPS immediately
-          const result = await sendGPS();
-          if (result !== 'stopped') setCount(c => c + 1);
-          // Then every 60 seconds
-          intervalRef.current = setInterval(async () => {
-            const result = await sendGPS();
-            if (result === 'stopped') {
-              clearInterval(intervalRef.current);
-              setStatus('stopped');
-            } else {
-              setCount(c => c + 1);
-            }
-          }, 60000);
+          sendGPS();
+          intervalRef.current = setInterval(sendGPS, 60000);
+        }
+        if (!data.trackingActive && status === 'sending') {
+          clearInterval(intervalRef.current);
+          setStatus('stopped');
         }
       } catch (e) {}
     }, 3000);
-    return () => clearInterval(checkStatus);
+    return () => {
+      clearInterval(checkStatus);
+      clearInterval(intervalRef.current);
+    };
   }, [status]);
 
   return (
     <div style={{ padding: 20, textAlign: 'center' }}>
       <h1>📡 Alain - GPS Sender</h1>
-
       {status === 'waiting' && (
         <div style={{ fontSize: 22, marginTop: 50 }}>
           ⏳ Waiting for Michel to start...
@@ -208,7 +176,6 @@ function AlainPage() {
           <span style={{ fontSize: 14, color: '#666' }}>Keep this page open</span>
         </div>
       )}
-
       {status === 'sending' && (
         <div style={{ fontSize: 22, marginTop: 30, color: '#4CAF50' }}>
           🟢 Sending GPS every 1 minute
@@ -222,11 +189,9 @@ function AlainPage() {
           )}
         </div>
       )}
-
       {status === 'stopped' && (
         <div style={{ fontSize: 22, marginTop: 50, color: '#f44336' }}>
-          🔴 Stopped
-          <br/>{count} points sent ✅
+          🔴 Stopped<br/>{count} points sent ✅
         </div>
       )}
     </div>
@@ -235,7 +200,6 @@ function AlainPage() {
 
 function App() {
   const [role, setRole] = useState(null);
-
   if (!role) {
     return (
       <div style={{ padding: 40, textAlign: 'center' }}>
@@ -244,21 +208,18 @@ function App() {
         <br/>
         <button onClick={() => setRole('michel')}
           style={{ fontSize: 26, padding: '20px 50px', margin: 10,
-                   backgroundColor: '#2196F3', color: 'white', border: 'none',
-                   borderRadius: 15 }}>
+                   backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: 15 }}>
           📱 Michel
         </button>
         <br/><br/>
         <button onClick={() => setRole('alain')}
           style={{ fontSize: 26, padding: '20px 50px', margin: 10,
-                   backgroundColor: '#FF9800', color: 'white', border: 'none',
-                   borderRadius: 15 }}>
+                   backgroundColor: '#FF9800', color: 'white', border: 'none', borderRadius: 15 }}>
           📡 Alain
         </button>
       </div>
     );
   }
-
   return role === 'michel' ? <MichelPage /> : <AlainPage />;
 }
 
