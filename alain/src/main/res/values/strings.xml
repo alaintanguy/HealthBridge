@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HealthBridge Alain</string>
+    <string name="subtitle">Location Sender</string>
+    <string name="btn_start_tracking">▶ Start Tracking</string>
+    <string name="btn_stop_tracking">⏹ Stop Tracking</string>
+    <string name="status_idle">● Idle</string>
+    <string name="status_tracking">🟢 Tracking active – sending GPS every 60 s</string>
+    <string name="error_location_permission">Location permission is required to send GPS updates.</string>
+    <string name="note_fcm_control">Tracking is also controlled remotely by Michel\'s device via FCM commands.</string>
+    <string name="notif_channel_name">HealthBridge GPS</string>
+    <string name="notif_tracking_title">HealthBridge – Tracking Active</string>
+    <string name="notif_tracking_start">Starting GPS tracking…</string>
+    <string name="notif_tracking_body">📍 %.5f, %.5f</string>
+</resources>

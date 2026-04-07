@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Devices collection ─────────────────────────────────────────────────
+    // devices/{deviceId}/info/token   – Alain writes its FCM token here.
+    // devices/{deviceId}/commands/*   – Michel creates command documents.
+    // devices/{deviceId}/location/*   – Alain writes location here.
+    //
+    // ⚠️  SECURITY WARNING: The rules below allow unrestricted read/write
+    // access and are intended for DEMO/DEVELOPMENT use ONLY.
+    //
+    // Before deploying to production you MUST restrict access, for example:
+    //   allow write: if request.auth != null
+    //                && request.auth.uid == deviceId;
+    //   allow read:  if request.auth != null;
+    //
+    // See https://firebase.google.com/docs/firestore/security/get-started
+
+    match /devices/{deviceId}/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

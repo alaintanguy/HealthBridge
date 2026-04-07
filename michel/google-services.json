@@ -1,0 +1,36 @@
+{
+  "_comment": "PLACEHOLDER – Replace this file with your real google-services.json from the Firebase Console.",
+  "_instructions": [
+    "1. Go to https://console.firebase.google.com/",
+    "2. Open (or create) your HealthBridge project.",
+    "3. Click the Android icon to add an Android app.",
+    "4. Use package name: com.healthbridge.michel",
+    "5. Download google-services.json and place it here (michel/google-services.json)."
+  ],
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_PROJECT_ID.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:YOUR_PROJECT_NUMBER:android:XXXXXXXXXXXXXXXX",
+        "android_client_info": {
+          "package_name": "com.healthbridge.michel"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "YOUR_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

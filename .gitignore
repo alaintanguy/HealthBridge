@@ -2,14 +2,29 @@
 *.iml
 .gradle
 /local.properties
+local.properties
 /.idea
 /build
 /captures
 .externalNativeBuild
 
+# Gradle
+.gradle/
+build/
+
 # API Keys - NEVER push these!
 apikeys.properties
 secrets.properties
+# NOTE: The google-services.json files in michel/ and alain/ are PLACEHOLDERS.
+# Replace them with real files from the Firebase Console before building.
+# Do NOT commit real google-services.json files to a public repository.
+
 node_modules/
 .env
 *.log
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

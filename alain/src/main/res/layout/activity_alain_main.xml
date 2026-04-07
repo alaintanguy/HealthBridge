@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    tools:context=".AlainMainActivity">
+
+    <!-- App title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subtitle"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="40dp" />
+
+    <!-- Status indicator -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/status_idle"
+        android:textSize="18sp"
+        android:textColor="@color/status_idle"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp" />
+
+    <!-- Start button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStartService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="@string/btn_start_tracking"
+        android:textAllCaps="false"
+        android:padding="14dp" />
+
+    <!-- Stop button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStopService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_stop_tracking"
+        android:textAllCaps="false"
+        android:padding="14dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+    <!-- Info note -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/note_fcm_control"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="32dp"
+        android:gravity="center" />
+
+</LinearLayout>

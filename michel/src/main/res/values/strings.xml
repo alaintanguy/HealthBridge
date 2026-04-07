@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HealthBridge Michel</string>
+    <string name="btn_start_tracking">▶ Start Tracking</string>
+    <string name="btn_stop_tracking">⏹ Stop Tracking</string>
+    <string name="status_idle">● Idle – press Start Tracking to begin</string>
+    <string name="status_tracking">● Tracking Alain…</string>
+    <string name="status_start_sent">⏳ Start command sent to Alain…</string>
+    <string name="status_stop_sent">⏳ Stop command sent to Alain…</string>
+    <string name="status_location">📍 %.5f, %.5f  (%s%s)</string>
+    <string name="error_alain_token_not_found">Alain\'s device token not found. Is HealthBridgeAlain installed and running?</string>
+    <string name="error_send_command">Failed to send command: %s</string>
+    <string name="toast_start_sent">✅ START command sent</string>
+    <string name="toast_stop_sent">✅ STOP command sent</string>
+    <string name="notif_channel_name">HealthBridge Locations</string>
+    <string name="notif_location_title">New Location Update</string>
+    <string name="notif_location_body">Alain: %.5f, %.5f%s</string>
+</resources>
