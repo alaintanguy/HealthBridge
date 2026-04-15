@@ -1,4 +1,4 @@
-package com.healthbridge
+package com.healthbridge.R
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
