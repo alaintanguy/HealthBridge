@@ -57,7 +57,8 @@ class LocationService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("HealthBridge GPS")
             .setContentText(text)
-            .setSmallIcon(R.drawable.ic_heart)
+           // .setSmallIcon(R.drawable.ic_heart)
+             .setSmallIcon(android.R.drawable.ic_dialog_info)
             //.setOngoing(true)
             .build()
     }
