@@ -10,6 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Link to your layout file
-        setContentView(layout.activity_main)
+      //  setContentView(layout.activity_main)
+    //  app/src/main/java/com/healthbridge/MainActivity.kt (ref 9fa90d702a45958725bf50ffb920a892b998b429)
     }
 }
