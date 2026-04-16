@@ -10,6 +10,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Link to your layout file
-        setContentView(R.layout.activity_main)
+        setContentView(.layout.activity_main)
     }
 }
