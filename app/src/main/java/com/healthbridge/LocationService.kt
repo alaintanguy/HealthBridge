@@ -58,7 +58,7 @@ class LocationService : Service() {
             .setContentTitle("HealthBridge GPS")
             .setContentText(text)
             .setSmallIcon(R.drawable.ic_heart)
-            .setOngoing(true)
+            //.setOngoing(true)
             .build()
     }
 
